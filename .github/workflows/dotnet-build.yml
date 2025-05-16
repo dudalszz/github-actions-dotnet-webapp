@@ -5,28 +5,27 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 * * * *' # A cada hora
+    - cron: '0 * * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Action pré-existente: Clona o repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Instala o SDK do .NET
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.x'  # ou outra versão que seu projeto usa
+          dotnet-version: '7.0.x'
 
-      # Restaura pacotes
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          for project in $(find . -name "*.csproj"); do
+            dotnet restore "$project"
+          done
 
-      # Script personalizado: build dos projetos .csproj
       - name: Build all projects
         run: |
           for project in $(find . -name "*.csproj"); do
